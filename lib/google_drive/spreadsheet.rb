@@ -41,6 +41,10 @@ module GoogleDrive
           return @title
         end
 
+        def updated_at
+          @updated_at ||= spreadsheet_feed_entry.css('updated').text.to_datetime
+        end
+
         # Key of the spreadsheet.
         def key
           if !(@worksheets_feed_url =~

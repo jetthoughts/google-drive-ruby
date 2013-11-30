@@ -418,7 +418,12 @@ module GoogleDrive
         end
 
         def request(method, url, params = {}) #:nodoc:
-          
+          if (method == :get) && (cache_key = params[:cache_key])
+            cached = Rails.cache.read(cache_key)
+            if cached.present?
+              return convert_response(OpenStruct.new(body: cached), :xml)
+            end
+          end
           # Always uses HTTPS.
           url = url.gsub(%r{^http://}, "https://")
           data = params[:data]
@@ -442,6 +447,9 @@ module GoogleDrive
                 response.code == "401" ? AuthenticationError : GoogleDrive::Error,
                 "Response code #{response.code} for #{method} #{url}: " +
                 CGI.unescapeHTML(response.body))
+            end
+            if cache_key
+              Rails.cache.write(cache_key, response.body)
             end
             return convert_response(response, response_type)
           end

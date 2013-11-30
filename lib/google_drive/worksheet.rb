@@ -230,7 +230,7 @@ module GoogleDrive
         # Note that changes you made by []= etc. is discarded if you haven't called save().
         def reload()
           
-          doc = @session.request(:get, @cells_feed_url)
+          doc = @session.request(:get, @cells_feed_url, {cache_key: "spreadsheets/#{@spreadsheet.key}/worksheets/#{title}/#{@updated}"})
           @max_rows = doc.css("gs|rowCount").text.to_i()
           @max_cols = doc.css("gs|colCount").text.to_i()
           @title = doc.css("feed > title")[0].text
