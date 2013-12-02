@@ -418,7 +418,7 @@ module GoogleDrive
         end
 
         def request(method, url, params = {}) #:nodoc:
-          if (method == :get) && (cache_key = params[:cache_key])
+          if GoogleDrive.config.use_caching && method == :get && (cache_key = params[:cache_key])
             cached = Rails.cache.read(cache_key)
             if cached.present?
               return convert_response(OpenStruct.new(body: cached), :xml)

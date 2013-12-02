@@ -2,7 +2,7 @@
 # The license of this source is "New BSD Licence"
 
 require "google_drive/session"
-
+require "google_drive/configuration"
 
 module GoogleDrive
 
@@ -16,6 +16,10 @@ module GoogleDrive
     # access.
     def self.login(mail, password, proxy = nil)
       return Session.login(mail, password, proxy)
+    end
+
+    def self.config
+      @config ||= Configuration.new
     end
 
     # Authenticates with given OAuth1 or OAuth2 token.

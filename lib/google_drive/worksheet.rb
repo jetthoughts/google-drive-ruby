@@ -228,9 +228,9 @@ module GoogleDrive
 
         # Reloads content of the worksheets from the server.
         # Note that changes you made by []= etc. is discarded if you haven't called save().
-        def reload()
-          
-          doc = @session.request(:get, @cells_feed_url, {cache_key: "spreadsheets/#{@spreadsheet.key}/worksheets/#{title}/#{@updated}"})
+        def reload(skip_cache = false)
+          params = skip_cache ? {} : {cache_key: "spreadsheets/#{@spreadsheet.key}/worksheets/#{title}/#{@updated}"}
+          doc = @session.request(:get, @cells_feed_url, params)
           @max_rows = doc.css("gs|rowCount").text.to_i()
           @max_cols = doc.css("gs|colCount").text.to_i()
           @title = doc.css("feed > title")[0].text
@@ -275,7 +275,7 @@ module GoogleDrive
             EOS
 
             @session.request(:put, edit_url, :data => xml)
-
+            @updated = Time.zone.now
             @meta_modified = false
             sent = true
 
@@ -357,7 +357,7 @@ module GoogleDrive
         # Calls save() and reload().
         def synchronize()
           save()
-          reload()
+          reload(true)
         end
 
         # Deletes this worksheet. Deletion takes effect right away without calling save().
