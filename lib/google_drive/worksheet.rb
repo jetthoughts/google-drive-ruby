@@ -323,7 +323,7 @@ module GoogleDrive
               </feed>
             EOS
 
-            batch_url = concat_url(self.cells_feed_url, "/batch")
+            batch_url = concat_url(self.cells_feed_url, "/batch?lsrp=1")
             result = @session.request(
                 :post,
                 batch_url,

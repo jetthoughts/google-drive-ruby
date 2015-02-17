@@ -29,7 +29,7 @@ module GoogleDrive
         
         # URL of worksheet-based feed of the spreadsheet.
         def worksheets_feed_url
-          return "https://spreadsheets.google.com/feeds/worksheets/%s/private/full" %
+          return "https://spreadsheets.google.com/feeds/worksheets/%s/private/full?lsrp=1" %
               self.id
         end
 
