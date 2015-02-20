@@ -32,10 +32,23 @@ module GoogleDriveV0
             path = uri.path + (uri.query ? "?#{uri.query}" : "")
             header = auth_header(auth).merge(extra_header)
             if method == :delete || method == :get
-              return http.__send__(method, path, header)
+              return get_or_delete(http, method, path, header)
             else
               return http.__send__(method, path, data, header)
             end
+          end
+        end
+
+        def get_or_delete(http, method, path, header, limit = 10)
+          raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+          response = http.__send__(method, path, header)
+
+          case response
+            when Net::HTTPSuccess     then response
+            when Net::HTTPRedirection then get_or_delete(http, method, response['location'], header, limit - 1)
+            else
+              response.error!
           end
         end
         
